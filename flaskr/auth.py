@@ -56,9 +56,16 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('index'))
+            return redirect(url_for('auth.profile'))
         flash(error)
     return render_template('auth/login.html')
+
+@bp.route('/profile', methods=('GET', 'POST'))
+def profile():
+    if g.user is None:
+        return redirect(url_for('auth.login'))
+    else:
+        return render_template('auth/profile.html')
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -72,7 +79,7 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.profile'))
 
 def login_required(view):
     @functools.wraps(view)
