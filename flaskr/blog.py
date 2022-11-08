@@ -7,6 +7,7 @@ from flaskr.db import get_db
 
 bp = Blueprint('blog', __name__)
 
+
 @bp.route('/')
 def index():
     db = get_db()
@@ -15,9 +16,10 @@ def index():
         'FROM post p JOIN user u ON p.author_id = u.id '
         'ORDER BY created DESC'
     ).fetchall()
-    return render_template('blog/index.html', posts = posts)
+    return render_template('blog/index.html', posts=posts)
 
-@bp.route('/blog/create', methods=('GET','POST'))
+
+@bp.route('/blog/create', methods=('GET', 'POST'))
 @login_required
 def create():
     if request.method == 'POST':
@@ -27,7 +29,7 @@ def create():
 
         if not title:
             error = 'Title is required.'
-        
+
         if error is not None:
             flash(error)
         else:
@@ -41,7 +43,8 @@ def create():
             return redirect(url_for('blog.index'))
     return render_template('blog/create.html')
 
-@bp.route('/<int:id>/update', methods=('GET','POST'))
+
+@bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
     post = get_post(id)
@@ -66,6 +69,7 @@ def update(id):
             return redirect(url_for('blog.index'))
     return render_template('blog/update.html', post=post)
 
+
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
@@ -74,6 +78,7 @@ def delete(id):
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
+
 
 def get_post(id, check_author=True):
     post = get_db().execute(

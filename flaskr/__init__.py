@@ -19,6 +19,9 @@ def create_app(test_config=None):
         pass
 
     # # application route conf
+    @app.route('/hello')
+    def hello():
+        return 'Hello,World!'
     # @app.route('/')
     # def index():
     #     if g.user is None:

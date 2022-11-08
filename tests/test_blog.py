@@ -15,8 +15,9 @@ def test_index(client, auth):
     assert b'test\nbody' in response.data
     assert b'href="/1/update"' in response.data
 
+
 @pytest.mark.parametrize('path', (
-    '/create',
+    '/blog/create',
     '/1/update',
     '/1/delete',
 ))
@@ -48,10 +49,11 @@ def test_exists_required(client, auth, path):
     auth.login()
     assert client.post(path).status_code == 404
 
+
 def test_create(client, auth, app):
     auth.login()
-    assert client.get('/create').status_code == 200
-    client.post('/create', data={'title': 'created', 'body': ''})
+    assert client.get('/blog/create').status_code == 200
+    client.post('/blog/create', data={'title': 'created', 'body': ''})
 
     with app.app_context():
         db = get_db()
@@ -71,13 +73,14 @@ def test_update(client, auth, app):
 
 
 @pytest.mark.parametrize('path', (
-    '/create',
+    '/blog/create',
     '/1/update',
 ))
 def test_create_update_validate(client, auth, path):
     auth.login()
     response = client.post(path, data={'title': '', 'body': ''})
     assert b'Title is required.' in response.data
+
 
 def test_delete(client, auth, app):
     auth.login()

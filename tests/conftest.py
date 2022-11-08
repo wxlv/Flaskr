@@ -10,7 +10,7 @@ with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
 
 @pytest.fixture
 def app():
-    db_fd, db_path = tempfile.mkdtemp()
+    db_fd, db_path = tempfile.mkstemp()
 
     app = create_app({
         'TESTING': True,
@@ -20,19 +20,22 @@ def app():
     with app.app_context():
         init_db()
         get_db().executescript(_data_sql)
-    
+
     yield app
 
     os.close(db_fd)
     os.unlink(db_path)
 
+
 @pytest.fixture
 def client(app):
     return app.test_client()
 
+
 @pytest.fixture
 def runner(app):
     return app.test_cli_runner()
+
 
 class AuthActions(object):
     def __init__(self, client):

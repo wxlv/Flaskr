@@ -18,9 +18,9 @@ def register():
         db = get_db()
         error = None
 
-        if not username:
+        if not username or username == '':
             error = 'Username is required.'
-        if not password:
+        if not password or password == '':
             error = 'Password is required.'
 
         if error is None:
@@ -30,7 +30,7 @@ def register():
                     (username, generate_password_hash(password))
                 )
                 db.commit()
-            except db.indentationError:
+            except db.IntegrityError:
                 error = f'Username {username} is already registered.'
             else:
                 return redirect(url_for('auth.login'))
