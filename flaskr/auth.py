@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
 )
 
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -9,6 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -18,10 +19,11 @@ def register():
         db = get_db()
         error = None
 
+        # print(f'username:{username},password:{password}')
         if not username or username == '':
-            error = 'Username is required.'
+            error = b'Username is required.'
         if not password or password == '':
-            error = 'Password is required.'
+            error = b'Password is required.'
 
         if error is None:
             try:
@@ -36,6 +38,7 @@ def register():
                 return redirect(url_for('auth.login'))
         flash(error)
     return render_template('auth/register.html')
+
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -52,7 +55,7 @@ def login():
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-        
+
         if error is None:
             session.clear()
             session['user_id'] = user['id']
@@ -60,26 +63,30 @@ def login():
         flash(error)
     return render_template('auth/login.html')
 
-@bp.route('/profile', methods=('GET', 'POST'))
+
+@bp.route('/profile')
 def profile():
     if g.user is None:
         return redirect(url_for('auth.login'))
-    else:
-        return render_template('auth/profile.html')
+    # else:
+    return render_template('auth/profile.html')
+
 
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    
+
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute('SELECT * FROM user WHERE id = ?',(user_id, )).fetchone()
+        g.user = get_db().execute('SELECT * FROM user WHERE id = ?', (user_id, )).fetchone()
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('auth.profile'))
+
 
 def login_required(view):
     @functools.wraps(view)

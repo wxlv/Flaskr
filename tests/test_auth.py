@@ -1,5 +1,5 @@
 import pytest
-from flask import g, session
+from flask import g, session, jsonify
 from flaskr.db import get_db
 
 
@@ -17,7 +17,7 @@ def test_register(client, app):
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
-    ('', '', b'Username is required.'),
+    ('', 'a', b'Username is required.'),
     ('a', '', b'Password is required.'),
     ('test', 'test', b'Username test is already registered.'),
 ))

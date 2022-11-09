@@ -2,3 +2,6 @@ flaskr/__pycache__/*
 flaskr.egg-info/*
 tests/__pycache__/*
 instance/flaskr.sqlite
+build/*
+dist/*
+.coverage
