@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, render_template, g, redirect, url_for
 from . import db, auth, blog
 
@@ -22,12 +21,7 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello,World!'
-    # @app.route('/')
-    # def index():
-    #     if g.user is None:
-    #         return redirect(url_for('auth.login'))
-    #     else:
-    #         return render_template('index.html')
+
     
     # initalized application database
     db.init_app(app)
@@ -38,6 +32,15 @@ def create_app(test_config=None):
 
     # register app default rule, the rule resitered in blog.py file
     app.add_url_rule('/', endpoint='index')
+
+    # register CORS
+    @app.after_request
+    def after_request(response):
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Accepts, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
+        return response
 
     # return flask app instance
     return app

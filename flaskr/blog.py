@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, json
 )
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
@@ -17,6 +17,22 @@ def index():
         'ORDER BY created DESC'
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
+
+
+@bp.route('/blog/postlist')
+def fetchPostList():
+    db = get_db()
+
+    posts = db.execute(
+        'SELECT p.id, title, body, created, author_id, username '
+        'FROM post p JOIN user u ON p.author_id = u.id '
+        'ORDER BY created DESC'
+    ).fetchall()
+    # print(json.dumps(posts[0]))
+    result_data = []
+    for p in posts:
+        result_data.append({k: p[k] for k in p.keys()})
+    return result_data
 
 
 @bp.route('/blog/create', methods=('GET', 'POST'))
