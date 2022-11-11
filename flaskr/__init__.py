@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, g, redirect, url_for
-from . import db, auth, blog
+from . import db, auth, blog, analysis
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -29,6 +29,7 @@ def create_app(test_config=None):
     # register app auth
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
+    app.register_blueprint(analysis.bp)
 
     # register app default rule, the rule resitered in blog.py file
     app.add_url_rule('/', endpoint='index')
